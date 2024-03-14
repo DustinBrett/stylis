@@ -1,4 +1,4 @@
-import {MS, MOZ, WEBKIT, RULESET, KEYFRAMES, DECLARATION} from './Enum.js'
+import {MOZ, WEBKIT, RULESET, KEYFRAMES, DECLARATION} from './Enum.js'
 import {match, charat, substr, strlen, sizeof, replace, combine, filter, assign} from './Utility.js'
 import {copy, lift, tokenize} from './Tokenizer.js'
 import {serialize} from './Serializer.js'
@@ -61,7 +61,6 @@ export function prefixer (element, index, children, callback) {
 								case '::placeholder':
 									lift(copy(element, {props: [replace(value, /:(plac\w+)/, ':' + WEBKIT + 'input-$1')]}))
 									lift(copy(element, {props: [replace(value, /:(plac\w+)/, ':' + MOZ + '$1')]}))
-									lift(copy(element, {props: [replace(value, /:(plac\w+)/, MS + 'input-$1')]}))
 									lift(copy(element, {props: [value]}))
 									assign(element, {props: filter(children, callback)})
 									break
