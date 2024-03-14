@@ -1,4 +1,3 @@
-export var MS = '-ms-'
 export var MOZ = '-moz-'
 export var WEBKIT = '-webkit-'
 
