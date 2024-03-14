@@ -1,4 +1,4 @@
-import {MS, MOZ, WEBKIT} from './Enum.js'
+import {MOZ, WEBKIT} from './Enum.js'
 import {hash, charat, strlen, indexof, replace, substr, match} from './Utility.js'
 
 /**
@@ -26,45 +26,38 @@ export function prefix (value, length, children) {
 			return MOZ + value + value
 		// appearance, user-select, transform, hyphens, text-size-adjust
 		case 5349: case 4246: case 4810: case 6968: case 2756:
-			return WEBKIT + value + MOZ + value + MS + value + value
+			return WEBKIT + value + MOZ + value + value
 		// writing-mode
 		case 5936:
 			switch (charat(value, length + 11)) {
 				// vertical-l(r)
 				case 114:
-					return WEBKIT + value + MS + replace(value, /[svh]\w+-[tblr]{2}/, 'tb') + value
 				// vertical-r(l)
 				case 108:
-					return WEBKIT + value + MS + replace(value, /[svh]\w+-[tblr]{2}/, 'tb-rl') + value
 				// horizontal(-)tb
 				case 45:
-					return WEBKIT + value + MS + replace(value, /[svh]\w+-[tblr]{2}/, 'lr') + value
+					return WEBKIT + value + value
 				// default: fallthrough to below
 			}
 		// flex, flex-direction, scroll-snap-type, writing-mode
 		case 6828: case 4268: case 2903:
-			return WEBKIT + value + MS + value + value
 		// order
 		case 6165:
-			return WEBKIT + value + MS + 'flex-' + value + value
-		// align-items
-		case 5187:
-			return WEBKIT + value + replace(value, /(\w+).+(:[^]+)/, WEBKIT + 'box-$1$2' + MS + 'flex-$1$2') + value
 		// align-self
 		case 5443:
-			return WEBKIT + value + MS + 'flex-item-' + replace(value, /flex-|-self/g, '') + (!match(value, /flex-|baseline/) ? MS + 'grid-row-' + replace(value, /flex-|-self/g, '') : '') + value
 		// align-content
 		case 4675:
-			return WEBKIT + value + MS + 'flex-line-pack' + replace(value, /align-content|flex-|-self/g, '') + value
 		// flex-shrink
 		case 5548:
-			return WEBKIT + value + MS + replace(value, 'shrink', 'negative') + value
 		// flex-basis
 		case 5292:
-			return WEBKIT + value + MS + replace(value, 'basis', 'preferred-size') + value
+			return WEBKIT + value + value
+    // align-items
+    case 5187:
+      return WEBKIT + value + replace(value, /(\w+).+(:[^]+)/, WEBKIT + 'box-$1$2') + value
 		// flex-grow
 		case 6060:
-			return WEBKIT + 'box-' + replace(value, '-grow', '') + WEBKIT + value + MS + replace(value, 'grow', 'positive') + value
+			return WEBKIT + 'box-' + replace(value, '-grow', '') + WEBKIT + value + value
 		// transition
 		case 4554:
 			return WEBKIT + replace(value, /([^-])(transform)/g, '$1' + WEBKIT + '$2') + value
@@ -76,23 +69,7 @@ export function prefix (value, length, children) {
 			return replace(value, /(image-set\([^]*)/, WEBKIT + '$1' + '$`$1')
 		// justify-content
 		case 4968:
-			return replace(replace(value, /(.+:)(flex-)?(.*)/, WEBKIT + 'box-pack:$3' + MS + 'flex-pack:$3'), /s.+-b[^;]+/, 'justify') + WEBKIT + value + value
-		// justify-self
-		case 4200:
-			if (!match(value, /flex-|baseline/)) return MS + 'grid-column-align' + substr(value, length) + value
-			break
-		// grid-template-(columns|rows)
-		case 2592: case 3360:
-			return MS + replace(value, 'template-', '') + value
-		// grid-(row|column)-start
-		case 4384: case 3616:
-			if (children && children.some(function (element, index) { return length = index, match(element.props, /grid-\w+-end/) })) {
-				return ~indexof(value + (children = children[length].value), 'span', 0) ? value : (MS + replace(value, '-start', '') + value + MS + 'grid-row-span:' + (~indexof(children, 'span', 0) ? match(children, /\d+/) : +match(children, /\d+/) - +match(value, /\d+/)) + ';')
-			}
-			return MS + replace(value, '-start', '') + value
-		// grid-(row|column)-end
-		case 4896: case 4128:
-			return (children && children.some(function (element) { return match(element.props, /grid-\w+-start/) })) ? value : MS + replace(replace(value, '-end', '-span'), 'span ', '') + value
+			return replace(replace(value, /(.+:)(flex-)?(.*)/, WEBKIT + 'box-pack:$3'), /s.+-b[^;]+/, 'justify') + WEBKIT + value + value
 		// (margin|padding)-inline-(start|end)
 		case 4095: case 3583: case 4068: case 2532:
 			return replace(value, /(.+)-inline(.+)/, WEBKIT + '$1$2') + value
@@ -116,9 +93,6 @@ export function prefix (value, length, children) {
 						return ~indexof(value, 'stretch', 0) ? prefix(replace(value, 'stretch', 'fill-available'), length, children) + value : value
 				}
 			break
-		// grid-(column|row)
-		case 5152: case 5920:
-			return replace(value, /(.+?):(\d+)(\s*\/\s*(span)?\s*(\d+))?(.*)/, function (_, a, b, c, d, e, f) { return (MS + a + ':' + b + f) + (c ? (MS + a + '-span:' + (d ? e : +e - +b)) + f : '') + value })
 		// position: sticky
 		case 4949:
 			// stick(y)?
@@ -130,10 +104,7 @@ export function prefix (value, length, children) {
 			switch (charat(value, charat(value, 14) === 45 ? 18 : 11)) {
 				// (inline-)?fle(x)
 				case 120:
-					return replace(value, /(.+:)([^;\s!]+)(;|(\s+)?!.+)?/, '$1' + WEBKIT + (charat(value, 14) === 45 ? 'inline-' : '') + 'box$3' + '$1' + WEBKIT + '$2$3' + '$1' + MS + '$2box$3') + value
-				// (inline-)?gri(d)
-				case 100:
-					return replace(value, ':', ':' + MS) + value
+					return replace(value, /(.+:)([^;\s!]+)(;|(\s+)?!.+)?/, '$1' + WEBKIT + (charat(value, 14) === 45 ? 'inline-' : '') + 'box$3' + '$1' + WEBKIT + '$2$3' + '$1') + value
 			}
 			break
 		// scroll-margin, scroll-margin-(top|right|bottom|left)
